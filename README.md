@@ -1,2 +1,2 @@
 # verstka-js-sdk
-Verska JS-SDK
+Verstka JS-SDK
