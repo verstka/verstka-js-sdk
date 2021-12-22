@@ -8,5 +8,9 @@
   },
   "devDependencies": {
     "vite": "^2.7.2"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "eventemitter3": "^4.0.7"
   }
 }
