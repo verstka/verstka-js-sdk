@@ -1,11 +1,16 @@
 import axios from 'axios'
 import Session from './session'
+import logger from './utils/logger'
 
 export default class SDK {
 
   static DEFAULT_TARGET = 'desktop'
 
-  constructor({ apiKey, imagesOrigin }) {
+  constructor({ apiKey, imagesOrigin, verbose = true }) {
+    logger.setLevel(verbose ? 0 : 1)
+
+    logger.infoData(`Initialize SDK`, { apiKey, imagesOrigin, verbose })
+
     this.apiKey = apiKey
     this.imagesOrigin = new URL(imagesOrigin)
 
@@ -43,6 +48,8 @@ export default class SDK {
       editorUrl: payload.data.edit_url,
       contentUrl: payload.data.contents,
       clientImagesFolder: payload.data.client_folder,
+      lackingImages: payload.data.lacking_pictures || [],
+      uploadUrlForLackingImages: payload.data.upload_url,
     }
   }
 
@@ -61,17 +68,26 @@ export default class SDK {
     target = SDK.DEFAULT_TARGET,
     customFields = {},
   }) {
+
+    logger.infoData(`openEditor`, {
+      userId,
+      materialId,
+      'HTML length': html.length,
+      target,
+      customFields,
+    })
     
     const sessionKey = [userId, materialId, target].join('_')
 
     const existingSession = this.getSession(sessionKey)
 
     if (existingSession) {
+      logger.info(`Session ${sessionKey} already exists`)
       existingSession.start()
       return
     }
 
-    const { sessionId, editorUrl, contentUrl, clientImagesFolder } = await this.getSessionData({
+    const { sessionId, editorUrl, contentUrl, clientImagesFolder, lackingImages, uploadUrlForLackingImages } = await this.getSessionData({
       userId,
       materialId,
       html,
@@ -79,13 +95,28 @@ export default class SDK {
       customFields,
     })
 
+    /**
+     * If clientImagesFolder is relative path then imagesOrigin will be applied.
+     * If clientImagesFolder is an URL – will be used as it is.
+     */
     const imagesUrl = (new URL(clientImagesFolder, this.imagesOrigin)).href
+
+    logger.infoData(`Creating new session`, {
+      sessionId,
+      editorUrl,
+      contentUrl,
+      clientImagesFolder,
+      lackingImages,
+      uploadUrlForLackingImages,
+    })
 
     const newSession = new Session({
       sessionId,
       editorUrl,
       contentUrl,
       imagesUrl,
+      lackingImages,
+      uploadUrlForLackingImages,
     })
 
     await newSession.start()
