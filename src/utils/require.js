@@ -45,3 +45,44 @@ export async function loadScript(src, { attributes = {} } = {}) {
     document.getElementsByTagName('head')[0].appendChild(script)
   })
 }
+
+/**
+ * Returns file as blob
+ * @param {String} url 
+ * @param {String} type @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType 
+ * @returns Promise<Blob>
+ */
+export async function loadFileAs(url, type) {
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest()
+
+    request.open('GET', url, true)
+    request.responseType = type
+
+    request.onload = () => resolve(request.response)
+
+    request.onerror = error => reject(error)
+
+    request.send(null)
+  })
+}
+
+/**
+ * Returns true if file exists
+ * @param {String} url 
+ * @returns Promise<Boolean>
+ */
+export async function isFileExist(url) {
+  return new Promise(resolve => {
+    const request = new XMLHttpRequest()
+
+    request.open('HEAD', url, false)
+
+    try {
+      request.send()
+      resolve(request.status === 200)
+    } catch(error) {
+      resolve(false)
+    }
+  })
+}
