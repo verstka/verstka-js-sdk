@@ -6,7 +6,7 @@ export default class SDK {
 
   static DEFAULT_TARGET = 'desktop'
 
-  constructor({ apiKey, imagesOrigin, verbose = true }) {
+  constructor({ apiKey, imagesOrigin, verbose = false }) {
     logger.setLevel(verbose ? 0 : 1)
 
     logger.infoData(`Initialize SDK`, { apiKey, imagesOrigin, verbose })
@@ -84,7 +84,7 @@ export default class SDK {
     if (existingSession) {
       logger.info(`Session ${sessionKey} already exists`)
       existingSession.start()
-      return
+      return existingSession
     }
 
     const { sessionId, editorUrl, contentUrl, clientImagesFolder, lackingImages, uploadUrlForLackingImages } = await this.getSessionData({
@@ -111,6 +111,9 @@ export default class SDK {
     })
 
     const newSession = new Session({
+      userId,
+      materialId,
+      target,
       sessionId,
       editorUrl,
       contentUrl,

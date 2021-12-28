@@ -6,14 +6,28 @@ import logger from './utils/logger'
 export default class Session extends EventEmitter {
 
   static EVENT_SAVED = 'saved'
+  static EVENT_CLOSED = 'closed'
 
   /**
-   * 
    * @param {Object} params 
    * @param {String} params.imagesUrl – URL to client's stored images
    */
-  constructor({ sessionId, editorUrl, contentUrl, imagesUrl, lackingImages = [], uploadUrlForLackingImages = null }) {
+  constructor({
+      userId,
+      materialId,
+      target,
+      sessionId,
+      editorUrl,
+      contentUrl,
+      imagesUrl,
+      lackingImages = [],
+      uploadUrlForLackingImages = null,
+    }) {
     super()
+
+    this.userId = userId
+    this.materialId = materialId
+    this.target = target
 
     this.sessionId = sessionId
     this.editorUrl = editorUrl
@@ -57,7 +71,7 @@ export default class Session extends EventEmitter {
     }
   }
 
-  async start() {
+  async open() {
     if (this.window) {
       this.window.focus()
       return
@@ -81,16 +95,21 @@ export default class Session extends EventEmitter {
 
     wormhole.on('Article closed', () => {
       logger.info(`Article closed`)
-      this.stop()
+      this.close()
     })
 
     this.window = window.open(this.editorUrl)
   }
 
-  stop() {
+  close() {
     if (this.window) {
       this.window.close()
       this.window = null
+      this.emit(Session.EVENT_CLOSED, {
+        userId: this.userId,
+        materialId: this.materialId,
+        target: this.target,
+      })
     }
   }
 
@@ -107,6 +126,9 @@ export default class Session extends EventEmitter {
       html: '',
       customFields: {},
       images: {},
+      userId: this.userId,
+      materialId: this.materialId,
+      target: this.target,
     }
 
     for (const filename of fileList) {
