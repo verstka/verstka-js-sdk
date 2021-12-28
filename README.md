@@ -34,7 +34,7 @@ Call `openEditor` to open editor window:
 - `userId` – ID of current user. Verstka doesn't use this ID. You can "hardcode" it if you don't need it either.
 - `materialID` – ID of current article. Verstka uses it for version history.
 - `target` – allows you to edit `desktop` or `mobile` (or whatever) versions at the same time. It's `desktop` by default.
-- `html` – artcile HTML. It's supposed to be empty when the article is created. When the article is edited, it contains the HTML of the previous version.
+- `html` – artcile HTML. It's supposed to be empty when new article is created. When the article is edited, it contains the HTML of the previous version.
 - `customFields` – JSON with arbitrary data. You will get back when the article is saved. Empty by default. 
 
 ```javascript
