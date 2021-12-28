@@ -1,13 +1,12 @@
 {
   "name": "verstka-js-sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "source": "src/sdk.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "parcel build"
   },
   "devDependencies": {
-    "vite": "^2.7.2"
+    "parcel": "^2.0.1"
   },
   "dependencies": {
     "axios": "^0.24.0",
