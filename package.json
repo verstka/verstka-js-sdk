@@ -1,7 +1,8 @@
 {
   "name": "verstka-js-sdk",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "source": "src/sdk.js",
+  "main": "src/sdk.js",
   "scripts": {
     "build": "parcel build"
   },
