@@ -61,6 +61,10 @@ export default class SDK {
     return this.activeSessions[key]
   }
 
+  removeSession(key) {
+    this.activeSessions[key] = null
+  }
+
   async openEditor({
     userId,
     materialId,
@@ -83,7 +87,7 @@ export default class SDK {
 
     if (existingSession) {
       logger.info(`Session ${sessionKey} already exists`)
-      existingSession.start()
+      existingSession.open()
       return existingSession
     }
 
@@ -122,7 +126,11 @@ export default class SDK {
       uploadUrlForLackingImages,
     })
 
-    await newSession.start()
+    await newSession.open()
+
+    newSession.once('closed', () => {
+      this.removeSession(sessionKey)
+    })
 
     return newSession
   }
