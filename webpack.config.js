@@ -7,8 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "sdk.js",
-    library: "VerstkaSDK",
-    libraryTarget: "umd",
+    libraryTarget: "commonjs",
   },
   module: {
     rules: [
