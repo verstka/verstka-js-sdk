@@ -1,29 +1,26 @@
 declare module "verstka-js-sdk" {
-  type Target = "desktop" | "mobile";
+  export type Target = "desktop" | "mobile";
 
   export type OpenEditorParams = {
     userId: string;
     materialId: string;
     target: Target;
     html: string;
-    customFields: {};
+    customFields?: {};
   };
 
   export type OnSaveParams = {
     data: any;
     html: string;
-    images: Blob[];
+    images: Record<string, Blob>;
     customFields: Record<string, any>;
     userId: string;
     materialId: string;
     target: Target;
-  }
+  };
 
   export class Session {
-    on(
-      type: "saved",
-      onSave: (params: OnSaveParams) => void
-    ): void;
+    on(type: "saved", onSave: (params: OnSaveParams) => void): void;
 
     on(
       type: "closed",
@@ -36,7 +33,7 @@ declare module "verstka-js-sdk" {
     ): void;
 
     close: () => void;
-    removeListener: (string, cb: Function) => void
+    removeListener: (string, cb: Function) => void;
   }
 
   class VerstkaSDK {

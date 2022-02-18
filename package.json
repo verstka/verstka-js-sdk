@@ -1,16 +1,23 @@
 {
   "name": "verstka-js-sdk",
-  "version": "0.0.4",
-  "source": "src/sdk.js",
+  "version": "0.0.5",
+  "module": "dist/sdk.js",
   "main": "src/sdk.js",
   "scripts": {
-    "build": "parcel build"
+    "build": "npx webpack",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "parcel": "^2.0.1"
+    "@babel/core": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "babel-loader": "^8.2.3",
+    "webpack": "^5.68.0",
+    "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "axios": "^0.24.0",
     "eventemitter3": "^4.0.7"
+  },
+  "peerDependencies": {
+    "axios": "^0.24.0"
   }
 }

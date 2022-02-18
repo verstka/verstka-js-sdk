@@ -101,3 +101,7 @@ function onClose({ html, images, customFields, userId, materialId, target }) {
 
 session.on('closed', onClose)
 ```
+
+### Peer deps
+
+- axios ^0.24.0
