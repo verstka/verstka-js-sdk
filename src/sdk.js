@@ -27,7 +27,7 @@ export default class SDK {
 		fromData.append('api-key', this.apiKey)
     fromData.append('custom_fields', JSON.stringify(customFields));
 
-    const { data: payload } = await axios.post('//dev.verstka.io/api/open', fromData, {
+    const { data: payload } = await axios.post('//dev.verstka.org/api/open', fromData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

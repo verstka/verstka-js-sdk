@@ -79,7 +79,7 @@ export default class Session extends EventEmitter {
 
     await this.uploadLackingImages()
 
-    await loadScript('//wormhole.verstka.io/wormhole.js')
+    await loadScript('//wormhole.verstka.org/wormhole.js')
 
     const wormhole = new Wormhole(`hi ${this.sessionId}`)
 
