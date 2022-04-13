@@ -6,13 +6,16 @@ export default class SDK {
 
   static DEFAULT_TARGET = 'desktop'
 
-  constructor({ apiKey, imagesOrigin, verbose = false }) {
+  constructor({ apiKey, imagesOrigin, verbose = false, dev = false }) {
     logger.setLevel(verbose ? 0 : 1)
 
     logger.infoData(`Initialize SDK`, { apiKey, imagesOrigin, verbose })
 
     this.apiKey = apiKey
     this.imagesOrigin = new URL(imagesOrigin)
+    this.isDev = dev
+
+    this.urlPrefix = this.isDev === true ? 'dev.' : ''
 
     this.activeSessions = {}
   }
@@ -27,7 +30,7 @@ export default class SDK {
 		fromData.append('api-key', this.apiKey)
     fromData.append('custom_fields', JSON.stringify(customFields));
 
-    const { data: payload } = await axios.post('//dev.verstka.org/api/open', fromData, {
+    const { data: payload } = await axios.post(`//${this.urlPrefix}verstka.org/api/open`, fromData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -40,7 +43,7 @@ export default class SDK {
     for (const key of ['session_id', 'contents', 'client_folder', 'edit_url']) {
       if (!payload.data[key]) {
         throw new Error(`Missing key "${key}"`)
-      } 
+      }
     }
 
     return {
@@ -80,7 +83,7 @@ export default class SDK {
       target,
       customFields,
     })
-    
+
     const sessionKey = [userId, materialId, target].join('_')
 
     const existingSession = this.getSession(sessionKey)
