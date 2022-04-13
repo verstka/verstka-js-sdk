@@ -14,6 +14,7 @@ To create the instance you will need:
 
 - `apiKey` – your API-key
 - `imagesOrigin` – the domain from which your images are served
+- `dev` — ability to connect to the our dev server, `false` bu default
 
 You can also set `verbose: true` for explicit logs, which is `false` by default.
 
@@ -24,6 +25,7 @@ const sdk = new VerstkaSDK({
   apiKey: 'fd07ff6ed5954c9675578c96b4cdf39d',
   imagesOrigin: 'https://domain.com',
   verbose: true,
+  dev: true,
 })
 ```
 
