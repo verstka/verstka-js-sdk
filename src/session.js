@@ -5,6 +5,7 @@ import logger from './utils/logger'
 
 export default class Session extends EventEmitter {
 
+  static EVENT_SAVING = 'saving'
   static EVENT_SAVED = 'saved'
   static EVENT_CLOSED = 'closed'
 
@@ -130,6 +131,11 @@ export default class Session extends EventEmitter {
       materialId: this.materialId,
       target: this.target,
     }
+
+    this.emit(Session.EVENT_SAVING, {
+      materialId: this.materialId,
+      target: this.target,
+    })
 
     for (const filename of fileList) {
       const fileUrl = `${this.contentUrl}/${filename}`
