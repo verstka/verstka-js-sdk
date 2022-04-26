@@ -10,7 +10,7 @@ export default class Session extends EventEmitter {
   static EVENT_CLOSED = 'closed'
 
   /**
-   * @param {Object} params 
+   * @param {Object} params
    * @param {String} params.imagesUrl – URL to client's stored images
    */
   constructor({
@@ -149,13 +149,15 @@ export default class Session extends EventEmitter {
         result.customFields = await loadFileAs(fileUrl, 'json')
 
       } else {
-        
+
         const imageIsOriginal = Session.imageIsOriginal(filename)
 
         if (imageIsOriginal) {
           const imageExistsAtClient = await isFileExist(`${this.imagesUrl}/${filename}`)
 
           if (imageExistsAtClient) {
+            result.images[filename] = null
+
             continue
           }
         }
