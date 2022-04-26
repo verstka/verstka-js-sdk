@@ -12,7 +12,7 @@ declare module "verstka-js-sdk" {
   export type OnSaveParams = {
     data: any;
     html: string;
-    images: Record<string, Blob>;
+    images: Record<string, Blob|null>;
     customFields: Record<string, any>;
     userId: string;
     materialId: string;
