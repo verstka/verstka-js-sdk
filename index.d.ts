@@ -19,8 +19,15 @@ declare module "verstka-js-sdk" {
     target: Target;
   };
 
+  export type OnSavingParams = {
+    materialId: string;
+    target: Target;
+  };
+
   export class Session {
     on(type: "saved", onSave: (params: OnSaveParams) => void): void;
+
+    on(type: "saving", onSave: (params: OnSavingParams) => void): void;
 
     on(
       type: "closed",
