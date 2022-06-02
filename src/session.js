@@ -8,6 +8,9 @@ export default class Session extends EventEmitter {
   static EVENT_SAVING = 'saving'
   static EVENT_SAVED = 'saved'
   static EVENT_CLOSED = 'closed'
+  static EVENT_IMAGE_RESOLVE = 'image_resolve'
+  static EVENT_IMAGE_RESOLVED = 'image_resolved'
+  static EVENT_IMAGE_REJECTED = 'image_rejected'
 
   /**
    * @param {Object} params
@@ -152,8 +155,19 @@ export default class Session extends EventEmitter {
 
         const imageIsOriginal = Session.imageIsOriginal(filename)
 
+        const imageResolveParams = {
+          materialId: this.materialId,
+          target: this.target,
+          filename,
+          fullPath: `${this.imagesUrl}/${filename}`
+        }
+
         if (imageIsOriginal) {
+          this.emit(Session.EVENT_IMAGE_RESOLVE, imageResolveParams)
+
           const imageExistsAtClient = await isFileExist(`${this.imagesUrl}/${filename}`)
+
+          this.emit(imageExistsAtClient ? Session.EVENT_IMAGE_RESOLVED : Session.EVENT_IMAGE_REJECTED, imageResolveParams)
 
           if (imageExistsAtClient) {
             result.images[filename] = null

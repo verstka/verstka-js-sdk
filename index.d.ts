@@ -12,7 +12,7 @@ declare module "verstka-js-sdk" {
   export type OnSaveParams = {
     data: any;
     html: string;
-    images: Record<string, Blob|null>;
+    images: Record<string, Blob | null>;
     customFields: Record<string, any>;
     userId: string;
     materialId: string;
@@ -22,6 +22,13 @@ declare module "verstka-js-sdk" {
   export type OnSavingParams = {
     materialId: string;
     target: Target;
+  };
+
+  export type ImageResolverParams = {
+    materialId: string;
+    target: Target;
+    filename: string;
+    fullPath: string;
   };
 
   export class Session {
@@ -37,6 +44,21 @@ declare module "verstka-js-sdk" {
         materialId: string;
         target: Target;
       }) => void
+    ): void;
+
+    on(
+      type: "image_resolve",
+      onResolve: (params: ImageResolverParams) => void
+    ): void;
+
+    on(
+      type: "image_resolved",
+      onResolved: (params: ImageResolverParams) => void
+    ): void;
+
+    on(
+      type: "image_rejected",
+      onRejected: (params: ImageResolverParams) => void
     ): void;
 
     close: () => void;
