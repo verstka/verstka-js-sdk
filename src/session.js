@@ -4,7 +4,6 @@ import axios from 'axios'
 import logger from './utils/logger'
 
 export default class Session extends EventEmitter {
-
   static EVENT_SAVING = 'saving'
   static EVENT_SAVED = 'saved'
   static EVENT_CLOSED = 'closed'
@@ -17,16 +16,16 @@ export default class Session extends EventEmitter {
    * @param {String} params.imagesUrl – URL to client's stored images
    */
   constructor({
-      userId,
-      materialId,
-      target,
-      sessionId,
-      editorUrl,
-      contentUrl,
-      imagesUrl,
-      lackingImages = [],
-      uploadUrlForLackingImages = null,
-    }) {
+    userId,
+    materialId,
+    target,
+    sessionId,
+    editorUrl,
+    contentUrl,
+    imagesUrl,
+    lackingImages = [],
+    uploadUrlForLackingImages = null,
+  }) {
     super()
 
     this.userId = userId
@@ -52,7 +51,9 @@ export default class Session extends EventEmitter {
   async uploadLackingImages() {
     if (this.lackingImages.length > 0 && this.uploadUrlForLackingImages) {
       try {
-        logger.info(`Downloading ${this.lackingImages.length} lacking images...`)
+        logger.info(
+          `Downloading ${this.lackingImages.length} lacking images...`
+        )
 
         const formData = new FormData()
 
@@ -60,8 +61,11 @@ export default class Session extends EventEmitter {
 
         for (const filename of this.lackingImages) {
           try {
-            formData.append(filename, await loadFileAs(`${this.contentUrl}/${filename}`, 'blob'))
-          } catch(error) {
+            formData.append(
+              filename,
+              await loadFileAs(`${this.contentUrl}/${filename}`, 'blob')
+            )
+          } catch (error) {
             logger.error(`Couldn't download ${filename}: ${error.mesage}`)
           }
         }
@@ -69,7 +73,7 @@ export default class Session extends EventEmitter {
         logger.info(`Uploading lacking images...`)
 
         await axios.post(this.uploadUrlForLackingImages, formData)
-      } catch(error) {
+      } catch (error) {
         logger.error(`Couldn't upload lacking images: ${error.message}`)
       }
     }
@@ -88,7 +92,6 @@ export default class Session extends EventEmitter {
     const wormhole = new Wormhole(`hi ${this.sessionId}`)
 
     wormhole.on('Article saved', ({ date }) => {
-
       logger.info(`Article saved at ${date}`)
 
       if (date > this.lastSaveDate) {
@@ -140,45 +143,64 @@ export default class Session extends EventEmitter {
       target: this.target,
     })
 
-    for (const filename of fileList) {
-      const fileUrl = `${this.contentUrl}/${filename}`
+    const htmlFile = fileList.find((filename) => filename === 'index.html')
 
-      if (filename === 'index.html') {
+    const customFields = fileList.find(
+      (filename) => filename === 'custom_fields.json'
+    )
 
-        result.html = await loadFileAs(fileUrl, 'string')
+    const originalImages = fileList.filter(
+      (filename) =>
+        !['index.html', 'custom_fields.json'].includes(filename) &&
+        Session.imageIsOriginal(filename)
+    )
 
-      } else if (filename === 'custom_fields.json') {
+    if (htmlFile) {
+      result.html = await loadFileAs(
+        `${this.contentUrl}/${htmlFile}`,
+        'string'
+      )
+    }
 
-        result.customFields = await loadFileAs(fileUrl, 'json')
+    if (customFields) {
+      result.customFields = await loadFileAs(
+        `${this.contentUrl}/${customFields}`,
+        'json'
+      )
+    }
 
-      } else {
+    this.emit(Session.EVENT_IMAGE_RESOLVE, {
+      images: originalImages,
+    })    
 
-        const imageIsOriginal = Session.imageIsOriginal(filename)
+    for (const image of originalImages) {
+      const fileUrl = `${this.contentUrl}/${image}`
 
-        const imageResolveParams = {
-          materialId: this.materialId,
-          target: this.target,
-          filename,
-          fullPath: `${this.imagesUrl}/${filename}`
-        }
-
-        if (imageIsOriginal) {
-          this.emit(Session.EVENT_IMAGE_RESOLVE, imageResolveParams)
-
-          const imageExistsAtClient = await isFileExist(`${this.imagesUrl}/${filename}`)
-
-          this.emit(imageExistsAtClient ? Session.EVENT_IMAGE_RESOLVED : Session.EVENT_IMAGE_REJECTED, imageResolveParams)
-
-          if (imageExistsAtClient) {
-            result.images[filename] = null
-
-            continue
-          }
-        }
-
-        result.images[filename] = await loadFileAs(fileUrl, 'blob')
-
+      const imageResolveParams = {
+        materialId: this.materialId,
+        target: this.target,
+        filename: image,
+        fullPath: `${this.imagesUrl}/${image}`,
       }
+
+      const imageExistsAtClient = await isFileExist(
+        `${this.imagesUrl}/${image}`
+      )
+
+      this.emit(
+        imageExistsAtClient
+          ? Session.EVENT_IMAGE_RESOLVED
+          : Session.EVENT_IMAGE_REJECTED,
+        imageResolveParams
+      )
+
+      if (imageExistsAtClient) {
+        result.images[image] = null
+
+        continue
+      }
+
+      result.images[image] = await loadFileAs(fileUrl, 'blob')
     }
 
     this.emit(Session.EVENT_SAVED, result)

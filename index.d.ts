@@ -48,7 +48,7 @@ declare module "verstka-js-sdk" {
 
     on(
       type: "image_resolve",
-      onResolve: (params: ImageResolverParams) => void
+      onResolve: (params: { images: string[] }) => void
     ): void;
 
     on(
