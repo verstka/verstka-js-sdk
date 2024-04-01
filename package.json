@@ -1,7 +1,7 @@
 {
   "name": "verstka-js-sdk",
   "version": "0.0.10",
-  "module": "dist/sdk.js",
+  "module": "src/sdk.js",
   "main": "src/sdk.js",
   "scripts": {
     "build": "npx webpack",
