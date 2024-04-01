@@ -1,6 +1,6 @@
 {
   "name": "verstka-js-sdk",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "module": "src/sdk.js",
   "main": "src/sdk.js",
   "scripts": {
